@@ -33,7 +33,7 @@ public class Server extends JFrame {
 	public static final int PORT_NUMBER = 8000;
 
 	// GUI - Jpanel and text area for displaying text
-	private JTextArea display_text = new JTextArea();
+	private JTextArea chat_box = new JTextArea();
 	private CustomCardLayout card_layout;
 
 	// NETWORKING - create a server socket and socket
@@ -52,8 +52,8 @@ public class Server extends JFrame {
 	// Constructor for the server
 	public Server() {
 		// Set up GUI stuff
-		display_text.setEditable(false);
-		card_layout = new CustomCardLayout(this, display_text);
+		chat_box.setEditable(false);
+		card_layout = new CustomCardLayout(this, chat_box);
 		add(card_layout);
 		setTitle("Server");
 		setSize(500, 500);
@@ -98,7 +98,7 @@ public class Server extends JFrame {
 				}
 
 				// Ensures display text area stays scrolled to the bottom
-				display_text.selectAll();
+				chat_box.selectAll();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -121,7 +121,7 @@ public class Server extends JFrame {
 	// Display new text to the text area
 	public void addText(String text) {
 		// ensure new line between messages
-		card_layout.display_text.append(text + "\n");
+		card_layout.chat_box.append(text + "\n");
 	}
 
 	// Returns client list
@@ -247,7 +247,7 @@ class CustomCardLayout extends JPanel implements ActionListener {
 	JLabel clients = new JLabel("Enter number of clients");
 	JTextField text_box = new JTextField();
 	JPanel card1 = new JPanel();
-	JTextArea display_text = new JTextArea();
+	JTextArea chat_box = new JTextArea();
 	JButton button = new JButton("OK");
 
 	// Server info
@@ -305,7 +305,7 @@ class CustomCardLayout extends JPanel implements ActionListener {
 	// Constructor for custom card layout
 	public CustomCardLayout(Server s, JTextArea jta) {
 		// initialize GUI
-		display_text = jta;
+		chat_box = jta;
 		server = s;
 		initComponents();
 		button.addActionListener(this);
