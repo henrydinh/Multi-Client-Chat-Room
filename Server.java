@@ -18,7 +18,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
+import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -70,6 +72,9 @@ public class Server extends JFrame {
 			}
 		}
 		addText("Max number of clients: " + max_clients);
+
+		// Set up number of threads for clients
+		thread_pool = Executors.newFixedThreadPool(max_clients);
 
 		// Set up socket to start server
 		try {
@@ -252,7 +257,7 @@ class CustomCardLayout extends JPanel implements ActionListener {
 
 	// Server info
 	Server server;
-	String server_ip_address;
+	// String server_ip_address;
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -280,26 +285,24 @@ class CustomCardLayout extends JPanel implements ActionListener {
 
 		// textBox.setText("jTextField1");
 
-		// Set up components and various properties
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(card1);
+		// Set up components and various properties, sizes, etc.
+		GroupLayout layout = new GroupLayout(card1);
 		card1.setLayout(layout);
-		layout.setHorizontalGroup(
-				layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-						.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-								layout.createSequentialGroup().addGap(75, 75, 75).addComponent(clients)
-										.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-										.addComponent(text_box, javax.swing.GroupLayout.DEFAULT_SIZE, 97,
-												Short.MAX_VALUE)
-						.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED).addComponent(button)
-						.addGap(43, 43, 43))
+		layout.setHorizontalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(GroupLayout.Alignment.TRAILING,
+						layout.createSequentialGroup().addGap(75, 75, 75).addComponent(clients)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+								.addComponent(text_box, GroupLayout.DEFAULT_SIZE, 97, Short.MAX_VALUE)
+								.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+								.addComponent(button).addGap(43, 43, 43))
 				.addGroup(layout.createSequentialGroup().addGap(164, 164, 164).addComponent(room)
-						.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
-				.createSequentialGroup().addGap(27, 27, 27).addComponent(room).addGap(37, 37, 37)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE).addComponent(button)
-						.addComponent(clients).addComponent(text_box, javax.swing.GroupLayout.PREFERRED_SIZE,
-								javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-				.addGap(199, 199, 199)));
+						.addContainerGap(GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
+		layout.setVerticalGroup(layout.createParallelGroup(GroupLayout.Alignment.LEADING)
+				.addGroup(layout.createSequentialGroup().addGap(27, 27, 27).addComponent(room).addGap(37, 37, 37)
+						.addGroup(layout.createParallelGroup(GroupLayout.Alignment.BASELINE).addComponent(button)
+								.addComponent(clients).addComponent(text_box, GroupLayout.PREFERRED_SIZE,
+										GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE))
+						.addGap(199, 199, 199)));
 	}
 
 	// Constructor for custom card layout
