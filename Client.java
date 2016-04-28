@@ -24,6 +24,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 public class Client extends JFrame {
+	private final static String DISCONNECT_MESSAGE = "0DISCONNECT0_0FROM0_0SERVER0_0NOW0";
+
 	// text field to enter ip address of server
 	private JTextField enter_address = new JTextField();
 
@@ -34,6 +36,8 @@ public class Client extends JFrame {
 
 	// Connect to server button
 	private JButton connect_button = new JButton("Connect");
+	// Button to disconnect from the server
+	private JButton disconnect_button = new JButton("Disconnect");
 
 	// Text field to type in message to send
 	private JTextField type_message = new JTextField();
@@ -57,7 +61,15 @@ public class Client extends JFrame {
 		top_panel.setLayout(new BorderLayout());
 		top_panel.add(new JLabel("Enter Address: "), BorderLayout.WEST);
 		top_panel.add(enter_address, BorderLayout.CENTER);
-		top_panel.add(connect_button, BorderLayout.EAST);
+
+		// Panel to hold the connect and disconnect buttons
+		JPanel button_panel = new JPanel();
+		button_panel.setLayout(new BorderLayout());
+		button_panel.add(connect_button, BorderLayout.NORTH);
+		button_panel.add(disconnect_button, BorderLayout.SOUTH);
+
+		// add button panel to top_panel
+		top_panel.add(button_panel, BorderLayout.EAST);
 
 		enter_address.setHorizontalAlignment(JTextField.RIGHT);
 		connect_button.addActionListener(new ActionListener() {
@@ -67,6 +79,17 @@ public class Client extends JFrame {
 				if (server_address.equals("")) {
 					server_address = enter_address.getText();
 					enter_address.setText("");
+				}
+			}
+		});
+		disconnect_button.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				try {
+					to_server.writeObject(DISCONNECT_MESSAGE);
+				} catch (IOException e1) {
+					e1.printStackTrace();
 				}
 			}
 		});

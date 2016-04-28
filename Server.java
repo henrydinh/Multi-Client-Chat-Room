@@ -7,6 +7,7 @@
  * Clients connect to the server via the server's ip address
  */
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -16,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +30,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
 
 public class Server extends JFrame {
 
@@ -48,11 +51,22 @@ public class Server extends JFrame {
 	// max number of clients allowed
 	int max_clients = 0;
 
+	// IP Address of host machine running the server
+	private String server_ip_address = "";
+
 	// array list to keep track of clients
 	static ArrayList<ClientHandler> clients = new ArrayList<ClientHandler>();
 
 	// Constructor for the server
 	public Server() {
+		// Get public IP Address for server
+		try {
+			server_ip_address = InetAddress.getLocalHost().toString();
+		} catch (UnknownHostException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
 		// Set up GUI stuff
 		chat_box.setEditable(false);
 		card_layout = new CustomCardLayout(this, chat_box);
@@ -61,6 +75,7 @@ public class Server extends JFrame {
 		setSize(500, 500);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		setResizable(false);
 		setVisible(true);
 
 		// Wait for user to set maximum number of clients
@@ -86,7 +101,7 @@ public class Server extends JFrame {
 				socket = server_socket.accept();
 				// broadcast update message if new client has connected
 				if (clients.size() < max_clients) {
-					broadcast("Client" + Integer.toString(clients.size() + 1), " has connected.");
+					broadcast("Client " + Integer.toString(clients.size() + 1), " has connected.");
 				}
 
 				// if chat room is not full, add client to room and client list
@@ -108,6 +123,10 @@ public class Server extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public String getIPAddress() {
+		return this.server_ip_address;
 	}
 
 	// Broadcast message to all clients and display on server text area
@@ -155,6 +174,8 @@ class ClientHandler implements Runnable {
 
 	// Checks to see if client has exitted or not
 	boolean exit_button_pressed;
+	// Disconnect message from client
+	private final static String DISCONNECT_MESSAGE = "0DISCONNECT0_0FROM0_0SERVER0_0NOW0";
 
 	public ClientHandler(Server server, Socket socket, String name, boolean accepted_to_server) {
 		this.server = server;
@@ -195,7 +216,6 @@ class ClientHandler implements Runnable {
 
 				// Check if client wants to exit
 				if (checkForExit(message_from_client)) {
-					server.broadcast(this.name, message_from_client);
 					exit_button_pressed = true;
 				} else {
 					// Send message to all clients
@@ -221,7 +241,11 @@ class ClientHandler implements Runnable {
 	}
 
 	private boolean checkForExit(String s) {
-		return false;
+		if (s.contains(DISCONNECT_MESSAGE)) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 
 	// send message to this client only
@@ -254,6 +278,7 @@ class CustomCardLayout extends JPanel implements ActionListener {
 	JPanel card1 = new JPanel();
 	JTextArea chat_box = new JTextArea();
 	JButton button = new JButton("OK");
+	JLabel ip_address_label = new JLabel();
 
 	// Server info
 	Server server;
@@ -283,8 +308,6 @@ class CustomCardLayout extends JPanel implements ActionListener {
 
 		button.setText("OK");
 
-		// textBox.setText("jTextField1");
-
 		// Set up components and various properties, sizes, etc.
 		GroupLayout layout = new GroupLayout(card1);
 		card1.setLayout(layout);
@@ -310,6 +333,7 @@ class CustomCardLayout extends JPanel implements ActionListener {
 		// initialize GUI
 		chat_box = jta;
 		server = s;
+		ip_address_label.setText("Server IP Address: " + server.getIPAddress());
 		initComponents();
 		button.addActionListener(this);
 
@@ -326,8 +350,12 @@ class CustomCardLayout extends JPanel implements ActionListener {
 		jta.setEditable(false);
 
 		// Make text area scrollable
-		JPanel card2 = new JPanel();
+		JPanel card2 = new JPanel(new BorderLayout());
+		card2.setBorder(new TitledBorder("Server IP Address: " + server.getIPAddress()));
 		card2.add(new JScrollPane(jta));
+
+		// display server's ip address
+		// card2.add(ip_address_label, BorderLayout.SOUTH);
 
 		// outer JPanel
 		cards = new JPanel(new CardLayout());
