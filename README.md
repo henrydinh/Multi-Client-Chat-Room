@@ -1,6 +1,6 @@
-Henry Dinh
+#Chat Room for Multiple Clients Using Sockets.
 
-Chat room for multiple clients using sockets.
+Henry Dinh
 
 The program contains a server and can connect multiple clients to it. The server host can set the maximum number of clients allowed to connect. Run the server first, and then run clients. The clients connect to the server via the server host machine's IP address.
 
